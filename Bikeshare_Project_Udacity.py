@@ -18,7 +18,8 @@ cities = ['chicago', 'new york', 'washington']
 
 months = ['january', 'february', 'march', 'april', 'may', 'june']
 
-days = ['sunday', 'monday', 'tuesday', 'wednesday',         'thursday', 'friday', 'saturday' ]
+days = ['sunday', 'monday', 'tuesday', 'wednesday', \
+        'thursday', 'friday', 'saturday' ]
 
 def get_filters():
     """
@@ -85,7 +86,7 @@ def load_data(city, month, day):
 def time_stats(df):
     """展示共享单车用户使用人数最多的时间段。"""
 
-    print('\n计算中...\n')
+    print('\n共享单车使用的时间相关信息\n')
 
     # display the most common month
     most_common_month = df['Month'].value_counts().idxmax()
@@ -102,16 +103,11 @@ def time_stats(df):
 
     print('-'*40)
 
-df = pd.read_csv("chicago.csv")
-df['Start Time'] = pd.to_datetime(df['Start Time'])
-df['Month'] = df['Start Time'].dt.month
-most_common_month = df['Month'].value_counts().idxmax()
-print("1~6月，骑共享单车的人最多的是：", most_common_month, "月.")
 
 def station_stats(df):
     """展示最常见的起点和终点."""
 
-    print('\n计算中...\n')
+    print('\n行程相关信息\n')
 
     # display most commonly used start station
     most_common_start_station = df['Start Station'].value_counts().idxmax()
@@ -122,7 +118,7 @@ def station_stats(df):
     print("最热门的终点是： ", most_common_end_station)
 
     # display most frequent combination of start station and end station trip
-    trip_series = df["Start Station"].astype(str) + " to " + df["End Station"].astype(str)
+    trip_series = df["Start Station"].astype(str) + " >>> " + df["End Station"].astype(str)
     trip_series.describe()
     most_popular_trip = trip_series.describe()["top"]
     print("最热门的行程是： ", most_popular_trip)
@@ -132,7 +128,7 @@ def station_stats(df):
 def trip_duration_stats(df):
     """展示骑行时间相关信息"""
 
-    print('\n计算中...\n')
+    print('\n骑行时间相关信息\n')
     
     # display total travel time
     total_travel_time = df['Trip Duration'].sum()
@@ -151,7 +147,7 @@ def trip_duration_stats(df):
 def user_stats(df):
     """展示用户类型相关信息"""
 
-    print('\n计算中...\n')
+    print('\n用户类型相关信息\n')
 
     # Display counts of user types
     user_type_counts = df['User Type'].value_counts()
@@ -162,47 +158,71 @@ def user_stats(df):
 def user_stats_gender(df):
     """展示用户性别相关信息"""
 
-    print('\n计算中...\n')
+    print('\n用户性别相关信息\n')
     
-    # Display counts of gender
-    user_gender_counts = df['Gender'].value_counts()
-    print("用户性别与数量如下所示：\n", user_gender_counts)
+    # Washington.csv 没有 Gender 和 Birth Year
+    try:
+        # Display counts of gender
+        user_gender_counts = df['Gender'].value_counts()
+        
+
+        # 展示 NaN 数量
+        gender_isna = df['Gender'].isna().sum()
+        
+   
+    except KeyError:
+        print("此数据集没有用户性别相关信息")
     
-    # 展示 NaN 数量
-    gender_isna = df1['Gender'].isna().sum()
-    print("性别信息不详的用户数量为： ", gender_isna)
+    else:
+        print("用户性别与数量如下所示：\n", user_gender_counts)
+        print("性别信息不详的用户数量为： ", gender_isna)
     
     print('-'*40)
 
+    
 def user_stats_birth(df):
     """展示用户的年龄相关信息"""
-    birth_year = df['Birth Year']
     
-    # the most common birth year
-    most_common_birth_year = birth_year.value_counts().idxmax()
-    print("出生年份最常见的一年是： ", most_common_birth_year)
+    print("\n用户的年龄相关信息\n")
     
-    # the most recent birth year
-    most_recent_birth_year = birth_year.max()
-    print("出生年份最晚的一年是： ", most_recent_birth_year)
+    # Washington.csv 没有 Gender 和 Birth Year
+    try:
+        birth_year = df['Birth Year']
+    
+    except KeyError:
+        print("此数据集没有出生年份相关信息")
+    
+    else:
+        # the most common birth year
+        most_common_birth_year = birth_year.value_counts().idxmax()
+        print("出生年份最常见的一年是： ", most_common_birth_year)
 
-    # the earliest birth year
-    earliest_birth_year = birth_year.min()
-    print("出生年份最早的一年是： ", earliest_birth_year)
+        # the most recent birth year
+        most_recent_birth_year = birth_year.max()
+        print("出生年份最晚的一年是： ", most_recent_birth_year)
 
+        # the earliest birth year
+        earliest_birth_year = birth_year.min()
+        print("出生年份最早的一年是： ", earliest_birth_year)
+
+    print('-'*40)
 
 def table_stats(df, city):
     """数据集元信息"""
-
+    
+    print("\n数据集元信息\n")
+    
     # counts the number of missing values in the entire dataset
-    number_of_missing_values = np.count_nonzero(df.isnull())
-    print("所选城市 {} 数据集中，缺少数据的项的数量为 : {}".format(city, number_of_missing_values))
+    number_of_missing_values = df.isnull().sum().sum()
+    print("所选城市 {} 数据集，缺少数据的项的数量为 : {}".format(city, number_of_missing_values))
 
     # counts the number of missing values in the User Type column
-    number_of_nonzero = np.count_nonzero(df['User Type'].isnull())
-    print("User Type 一列的空数据项为 : {}".format(number_of_missing_values))
+    number_of_nonzero = df['User Type'].isnull().sum().sum()
+    print("User Type 一列的空数据项为 : {}".format(number_of_nonzero))
 
 
+    print('-'*40)
+    
 def main():
     while True:
         city, month, day = get_filters()
@@ -212,6 +232,9 @@ def main():
         station_stats(df)
         trip_duration_stats(df)
         user_stats(df)
+        user_stats_gender(df)
+        user_stats_birth(df)
+        
         table_stats(df, city)
 
         restart = input('\n是否需要重新开始，请输入 yes 或者 no。\n')
@@ -221,4 +244,3 @@ def main():
 
 if __name__ == "__main__":
 	main()
-
