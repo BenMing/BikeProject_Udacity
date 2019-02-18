@@ -10,8 +10,8 @@ import numpy as np
 
 from input_func import get_user_input
 
-city_data = {'chicago': 'chicago.csv', 
-             'new york': 'new_york_city.csv', 
+city_data = {'chicago': 'chicago.csv',
+             'new york': 'new_york_city.csv',
              'washington': 'washington.csv'}
 
 cities = ['chicago', 'new york', 'washington']
@@ -42,7 +42,7 @@ def get_filters():
     # get user input for month (all, january, february, ... , june)
     month = get_user_input("你想查看哪个月份？请从 January, February, March, April, May, June 中进行选择，"
                            "输入 all 选择所有月份。\n> ", months)
-    
+
     # get user input for day of week (all, monday, tuesday, ... sunday)
     day = get_user_input("你希望查看星期几？请从 Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday 中进行选择。"
                          "若不想选特定某天，请输入 all .\n> ", days)
@@ -129,7 +129,7 @@ def trip_duration_stats(df):
     """展示骑行时间相关信息"""
 
     print('\n骑行时间相关信息\n')
-    
+
     # display total travel time
     total_travel_time = df['Trip Duration'].sum()
     print("总骑行时间是： ", total_travel_time)
@@ -159,39 +159,38 @@ def user_stats_gender(df):
     """展示用户性别相关信息"""
 
     print('\n用户性别相关信息\n')
-    
+
     # Washington.csv 没有 Gender 和 Birth Year
     try:
+        gender_col = df['Gender']
+
+    except KeyError:
+        print("此数据集没有出生年份相关信息")
+
+    else:
         # Display counts of gender
-        user_gender_counts = df['Gender'].value_counts()
-        
+        user_gender_counts = gender_col.value_counts()
+        print("用户性别与数量如下所示：\n", user_gender_counts)
 
         # 展示 NaN 数量
-        gender_isna = df['Gender'].isna().sum()
-        
-   
-    except KeyError:
-        print("此数据集没有用户性别相关信息")
-    
-    else:
-        print("用户性别与数量如下所示：\n", user_gender_counts)
+        gender_isna = gender_col.isna().sum()
         print("性别信息不详的用户数量为： ", gender_isna)
-    
+
     print('-'*40)
 
-    
+
 def user_stats_birth(df):
     """展示用户的年龄相关信息"""
-    
+
     print("\n用户的年龄相关信息\n")
-    
+
     # Washington.csv 没有 Gender 和 Birth Year
     try:
         birth_year = df['Birth Year']
-    
+
     except KeyError:
         print("此数据集没有出生年份相关信息")
-    
+
     else:
         # the most common birth year
         most_common_birth_year = birth_year.value_counts().idxmax()
@@ -209,20 +208,20 @@ def user_stats_birth(df):
 
 def table_stats(df, city):
     """数据集元信息"""
-    
+
     print("\n数据集元信息\n")
-    
+
     # counts the number of missing values in the entire dataset
-    number_of_missing_values = df.isnull().sum().sum()
-    print("所选城市 {} 数据集，缺少数据的项的数量为 : {}".format(city, number_of_missing_values))
+    missing_values_counts = df.isnull().sum().sum()
+    print("所选城市 {} 数据集，缺少数据的项的数量为 : {}".format(city, missing_values_counts))
 
     # counts the number of missing values in the User Type column
-    number_of_nonzero = df['User Type'].isnull().sum().sum()
-    print("User Type 一列的空数据项为 : {}".format(number_of_nonzero))
+    non_usertype_counts = df['User Type'].isnull().sum().sum()
+    print("User Type 一列的空数据项为 : {}".format(non_usertype_counts))
 
 
     print('-'*40)
-    
+
 def main():
     while True:
         city, month, day = get_filters()
@@ -234,7 +233,7 @@ def main():
         user_stats(df)
         user_stats_gender(df)
         user_stats_birth(df)
-        
+
         table_stats(df, city)
 
         restart = input('\n是否需要重新开始，请输入 yes 或者 no。\n')
