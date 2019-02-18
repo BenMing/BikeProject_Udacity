@@ -216,8 +216,8 @@ def table_stats(df, city):
     print("所选城市 {} 数据集，缺少数据的项的数量为 : {}".format(city, missing_values_counts))
 
     # counts the number of missing values in the User Type column
-    non_usertype_counts = df['User Type'].isnull().sum().sum()
-    print("User Type 一列的空数据项为 : {}".format(non_usertype_counts))
+    missing_usertype_counts = df['User Type'].isnull().sum().sum()
+    print("User Type 一列的空数据项为 : {}".format(missing_usertype_counts))
 
 
     print('-'*40)
